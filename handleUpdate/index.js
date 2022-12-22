@@ -11,13 +11,15 @@ const peopleModel = dynamoose.model('people', schema);
 exports.handler = async(event) => {
     
     const peopleId = JSON.parse(event.pathParameters.id);
+    
+    let parsedBody = JSON.parse(event.body);
 
     const response = { statusCode: null, body: null };
     try {
-        await peopleModel.delete(peopleId);
+        let updatedPerson = await peopleModel.update(peopleId, parsedBody);
         response.statusCode = 200;
         console.log("Item was successfully deleted.");
-        response.body = JSON.stringify({});
+        response.body = JSON.stringify(updatedPerson);
     } catch(e) {
         response.statusCode = 500;
         response.body = JSON.stringify(e.message);
